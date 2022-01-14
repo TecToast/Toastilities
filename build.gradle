@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+}
+
+group 'de.tectoast'
+version '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        name 'm2-dv8tion'
+        url 'https://m2.dv8tion.net/releases'
+    }
+}
+
+dependencies {
+    implementation 'org.json:json:20211205'
+    implementation("net.dv8tion:JDA:4.4.0_350")
+}
