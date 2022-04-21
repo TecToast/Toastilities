@@ -1,5 +1,7 @@
 plugins {
-    id 'java'
+    id 'java-library'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'maven-publish'
 }
 
 group 'de.tectoast'
@@ -14,6 +16,6 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.json:json:20211205'
-    implementation("net.dv8tion:JDA:4.4.0_350")
+    implementation 'org.json:json:20220320'
+    implementation("net.dv8tion:JDA:5.0.0-alpha.10")
 }

@@ -2,21 +2,22 @@ package de.tectoast.toastilities.interactive;
 
 import net.dv8tion.jda.api.entities.Message;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
 public class Layer {
     private final String msg;
     private final String id;
-    private final Function<Message, Object> check;
+    private final BiFunction<Message, Interactive, Object> check;
     private final Function<Object, String> toString;
     private Object answer;
 
-    public Layer(String id, String msg, Function<Message, Object> check) {
+    public Layer(String id, String msg, BiFunction<Message, Interactive, Object> check) {
         this(id, msg, check, null);
     }
 
-    public Layer(String id, String msg, Function<Message, Object> check, Function<Object, String> toString) {
+    public Layer(String id, String msg, BiFunction<Message, Interactive, Object> check, Function<Object, String> toString) {
         this.id = id;
         this.msg = msg;
         this.check = check;
@@ -43,7 +44,7 @@ public class Layer {
         return msg;
     }
 
-    public Function<Message, Object> getCheck() {
+    public BiFunction<Message, Interactive, Object> getCheck() {
         return check;
     }
 
