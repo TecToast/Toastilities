@@ -22,7 +22,7 @@ dependencies {
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        maven(MavenPublication) {
             groupId = 'de.tectoast' as Publication
             artifactId = 'toastilities' as Publication
             version = '2.0' as Publication
