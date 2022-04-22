@@ -8,8 +8,6 @@ import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,11 +77,6 @@ public class ReactionManager {
         return reactionManagers.stream().filter(r -> r.jda.equals(jda)).findFirst().orElse(null);
     }
 
-    public JSONArray toJSONArray() {
-        JSONArray arr = new JSONArray();
-        reactionMessages.stream().map(ReactionMessage::toJSONObject).forEach(arr::put);
-        return arr;
-    }
 
     /**
      * Gibt ein {@link Optional} einer ReactionMessage zurück, die auf das angegebene Event passt
@@ -162,10 +155,6 @@ public class ReactionManager {
 
         public boolean check(String channelId, String messageId, String emoji) {
             return this.channelId.equals(channelId) && this.messageId.equals(messageId) && this.emoji.equals(emoji);
-        }
-
-        public JSONObject toJSONObject() {
-            return new JSONObject().put("channelId", channelId).put("messageId", messageId).put("emoji", emoji).put("roleId", roleId);
         }
 
         @Override
