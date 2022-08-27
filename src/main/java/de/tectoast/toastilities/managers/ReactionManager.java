@@ -85,7 +85,8 @@ public class ReactionManager {
      * @return Ein {@link Optional}, dass potenziell die zum Event passende ReactionMessage enthält
      */
     private Optional<ReactionMessage> getByEvent(GenericMessageReactionEvent e) {
-        return reactionMessages.stream().filter(r -> r.check(e.getChannel().getId(), e.getMessageId(), e.getReactionEmote().isEmote() ? e.getReactionEmote().getId() : e.getReactionEmote().getEmoji())).findFirst();
+        String[] split = e.getEmoji().getAsReactionCode().split(":");
+        return reactionMessages.stream().filter(r -> r.check(e.getChannel().getId(), e.getMessageId(), split[split.length - 1])).findFirst();
     }
 
     /**
