@@ -1,67 +1,40 @@
-package de.tectoast.toastilities.repeat;
+package de.tectoast.toastilities.repeat
 
-import java.time.Instant;
-import java.time.temporal.TemporalAmount;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import kotlinx.coroutines.*
+import java.time.Instant
+import java.time.temporal.TemporalAmount
 
-public class RepeatTask {
-    ScheduledExecutorService service;
-    Instant lastExecution;
-    int amount;
-    TemporalAmount difference;
-    Consumer<Integer> consumer;
+class RepeatTask(
+    lastExecution: Instant,
+    amount: Int,
+    difference: TemporalAmount,
+    printDelays: Boolean = false,
+    consumer: suspend (Int) -> Unit,
+) {
+    private val scope = CoroutineScope(Dispatchers.Default)
 
-    public RepeatTask(Instant lastExecution, int amount, TemporalAmount difference, Consumer<Integer> consumer, boolean printDelays) {
-        this.lastExecution = lastExecution;
-        this.amount = amount;
-        this.difference = difference;
-        this.service = new ScheduledThreadPoolExecutor(amount);
-        this.consumer = consumer;
-        Instant now = Instant.now();
-        if (lastExecution.isBefore(now)) {
-            System.out.println("LastExecution is in the past, RepeatTask will be terminated");
-            return;
-        }
-        Instant last = lastExecution;
-        int currAmount = amount;
-        while (!last.isBefore(now)) {
-            int finalCurrAmount = currAmount;
-            long delay = last.toEpochMilli() - now.toEpochMilli();
-            if(printDelays) System.out.printf("%d -> %d%n", currAmount, delay);
-            service.schedule(() -> consumer.accept(finalCurrAmount), delay, TimeUnit.MILLISECONDS);
-            currAmount--;
-            last = last.minus(difference);
+    init {
+        val now = Instant.now()
+        if (lastExecution.isAfter(now)) {
+            var last = lastExecution
+            var currAmount = amount
+            while (!last.isBefore(now)) {
+                val finalCurrAmount = currAmount
+                val delay = last.toEpochMilli() - now.toEpochMilli()
+                if (printDelays) System.out.printf("%d -> %d%n", currAmount, delay)
+                scope.launch {
+                    delay(delay)
+                    consumer(finalCurrAmount)
+                }
+                currAmount--
+                last -= difference
+            }
+        } else {
+            println("LastExecution is in the past, RepeatTask will be terminated")
         }
     }
 
-    public RepeatTask(Instant lastExecution, int amount, TemporalAmount difference, Consumer<Integer> consumer) {
-        this(lastExecution, amount, difference, consumer, false);
-    }
-
-    public void clear() {
-        service.shutdownNow();
-    }
-
-    public ScheduledExecutorService getService() {
-        return service;
-    }
-
-    public Instant getLastExecution() {
-        return lastExecution;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public TemporalAmount getDifference() {
-        return difference;
-    }
-
-    public Consumer<Integer> getConsumer() {
-        return consumer;
+    fun clear() {
+        scope.cancel("Clear called")
     }
 }

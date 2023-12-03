@@ -1,8 +1,4 @@
-package de.tectoast.toastilities.interactive;
+package de.tectoast.toastilities.interactive
 
-public record ErrorMessage(String msg) {
 
-    public String getMsg() {
-        return msg;
-    }
-}
+data class ErrorMessage(val msg: String)
